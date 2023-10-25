@@ -27,6 +27,10 @@ class MovieDetailViewController: BaseViewController {
         viewModel.getDetail()
     }
     
+    override func setupUI() {
+        ivMoviePhoto.layer.cornerRadius = 8.0
+    }
+    
     override func bindData() {
         viewModel.moviePublishRelay.subscribe{ movieRO in
             self.lblMovieTitle.text = movieRO?.originalTitle

@@ -39,6 +39,8 @@ class MovieCollectionViewCell: BaseCollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
+        ivMoviePoster.layer.cornerRadius = 8.0
     }
     
     override func setupUI() {

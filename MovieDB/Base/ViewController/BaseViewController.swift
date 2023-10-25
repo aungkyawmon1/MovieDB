@@ -13,7 +13,8 @@ class BaseViewController: UIViewController {
     
     let disposeBag = DisposeBag()
     
-    private var alert: UIAlertController?
+    var loadingBackgroundView: UIView?
+    var activityIndicator: UIActivityIndicatorView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,23 +45,55 @@ class BaseViewController: UIViewController {
         
     }
     
+    // MARK: - Error Alert
+    func showAlert(title : String , message : String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     // MARK: - Loading
     func showLoading() {
-        alert = UIAlertController(title: nil, message: "အချက်အလက်များရယူနေပါသည် ခေတ္တစောင့်ပေးပါ", preferredStyle: .alert)
-
-        guard let alert = alert else { return }
-        let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
-        loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.style = .medium
-        loadingIndicator.startAnimating();
-
-        alert.view.addSubview(loadingIndicator)
-        present(alert, animated: true, completion: nil)
+        self.hideLoading()
+        
+        loadingBackgroundView = UIView(frame: .zero)
+        loadingBackgroundView?.backgroundColor = .white.withAlphaComponent(0.7)
+        self.view.addSubview(loadingBackgroundView!)
+        
+        loadingBackgroundView?.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            loadingBackgroundView!.topAnchor.constraint(equalTo: self.view.topAnchor),
+            loadingBackgroundView!.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            loadingBackgroundView!.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            loadingBackgroundView!.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        ])
+        
+        activityIndicator = UIActivityIndicatorView(frame: .zero)
+        activityIndicator?.startAnimating()
+        self.view.addSubview(activityIndicator!)
+        self.view.bringSubviewToFront(activityIndicator!)
+        activityIndicator?.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            activityIndicator!.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            activityIndicator!.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+            activityIndicator!.widthAnchor.constraint(equalToConstant: 42.0),
+            activityIndicator!.heightAnchor.constraint(equalToConstant: 42.0)
+        ])
+        
+        
     }
     
     func hideLoading() {
-        guard let _ = alert else { return }
-        dismiss(animated: true)
+        
+        if let activityIndicator = activityIndicator {
+            activityIndicator.stopAnimating()
+            activityIndicator.removeFromSuperview()
+        }
+        if let loadingBackgroundView = loadingBackgroundView {
+            loadingBackgroundView.removeFromSuperview()
+        }
     }
 
 }

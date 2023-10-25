@@ -18,9 +18,17 @@ class MovieViewController: BaseViewController, MovieTableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+       
+        
         viewModel.getPopular()
         
         viewModel.getUpcoming()
+    }
+    
+    override func bindViewModel() {
+        super.bindViewModel()
+        
+        viewModel.bindViewModel(in: self)
     }
 
     override func registerCell() {

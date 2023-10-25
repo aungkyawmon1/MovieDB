@@ -20,10 +20,12 @@ class MovieRepositoryImp: BaseRepository, MovieRepository {
     
     static let shared: MovieRepository = MovieRepositoryImp()
     
+    
     func saveMovies(movieVOs: [MovieVO], type: MovieType) {
         movieVOs.forEach { movieVO in
+            // Check movie is exist or not.
             if let movieRO = realmInstance.object(ofType: MovieRO.self, forPrimaryKey: movieVO.id ?? 0) {
-                
+                //If exist, update the movie attributs only
                 do {
                     try realmInstance.write({
                         movieRO.adult = movieVO.adult
@@ -48,6 +50,7 @@ class MovieRepositoryImp: BaseRepository, MovieRepository {
                 }
             
             } else {
+                //If not exist, add the movie attributs with default favorite value
                 let movieRO = movieVO.convertToRO()
                 movieRO.isFavorite = false
                 movieRO.movieType.append(type.rawValue)
@@ -62,6 +65,7 @@ class MovieRepositoryImp: BaseRepository, MovieRepository {
         }
     }
     
+    // Fetch movies based on movie type
     func getMovie(type: MovieType) -> RxSwift.Observable<[MovieRO]> {
         let results = realmInstance.objects(MovieRO.self).filter("ANY movieType CONTAINS[c] %@", type.rawValue)
         return Observable.array(from: results)
@@ -72,6 +76,8 @@ class MovieRepositoryImp: BaseRepository, MovieRepository {
         return Observable.from(object: data).map { return $0 }
     }
     
+    
+    // Update the favorite column
     func updateFavorite(id: Int, isFavorite: Bool ) {
         if let movieRO = realmInstance.object(ofType: MovieRO.self, forPrimaryKey: id) {
             

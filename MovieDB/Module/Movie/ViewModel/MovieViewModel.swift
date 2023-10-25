@@ -30,17 +30,26 @@ class MovieViewModel: BaseViewModel {
     let moviePublishRelay = PublishRelay<[MovieRO]?>()
     
     func getPopular() {
+        loadingPublishRelay.accept(true)
         movieModel.getPopular().subscribe(onNext: { movieList in
+            self.loadingPublishRelay.accept(false)
             self.popularMovies = movieList
             self.moviePublishRelay.accept(movieList)
+        }, onError: { _ in
+            self.loadingPublishRelay.accept(false)
+            self.errorPublishRelay.accept("Please, try again!")
         }).disposed(by: disposeBag)
     }
     
     func getUpcoming() {
+        loadingPublishRelay.accept(true)
         movieModel.getUpcoming().subscribe(onNext: { movieList in
-            
+            self.loadingPublishRelay.accept(false)
             self.upComingMovies = movieList
             self.moviePublishRelay.accept(movieList)
+        }, onError: { _ in
+            self.loadingPublishRelay.accept(false)
+            self.errorPublishRelay.accept("Please, try again!")
         }).disposed(by: disposeBag)
     }
     
