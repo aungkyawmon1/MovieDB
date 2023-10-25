@@ -21,7 +21,6 @@ class BaseViewModel {
         self.viewController = viewController
         
         loadingPublishRelay.bind {
-            debugPrint("Loading")
             if $0 {
                 viewController?.showLoading()
             } else {
